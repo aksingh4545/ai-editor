@@ -1,0 +1,57 @@
+Meme Editor API Documentation
+
+Endpoint: POST /process
+JSON Request Body:
+{
+  "filepath": "path/to/uploaded/file.jpg",
+  "filename": "original_filename.jpg",
+  "textLabels": [
+    {
+      "text": "Label text here",
+      "x": 50,
+      "y": 40,
+      "fontSize": 28,
+      "color": "#FF0000",
+      "bgEnabled": true,
+      "keyframes": []
+    }
+  ],
+  "bottomText": "Caption at bottom",
+  "format": "portrait",
+  "mediaType": "image"
+}
+Parameters
+Parameter	Type	Description	Values
+filepath	string	Path to uploaded file	Required
+filename	string	Original filename	Required
+textLabels	array	List of labels to add	Array of label objects
+bottomText	string	Caption at bottom	Optional (empty = no caption)
+format	string	Output format	original, square, portrait, landscape
+mediaType	string	Type of media	image or video
+Label Object
+Field	Type	Range	Description
+text	string	any	The label text to display
+x	number	0-100	Horizontal position (% from left)
+y	number	0-100	Vertical position (% from top)
+fontSize	number	12-120	Text size in pixels
+color	string	hex code	Text color (e.g., #FFFFFF)
+bgEnabled	boolean	true/false	Show background behind text
+keyframes	array	time-based	For videos - position at specific times
+Keyframe Object (for videos)
+{
+  "time": 2.5,
+  "x": 30,
+  "y": 50
+}
+Field	Type	Description
+time	number	Time in seconds
+x	number	Position X at this time (%)
+y	number	Position Y at this time (%)
+Example LLM Prompt
+For your LLM, give instructions like:
+Create a meme from this image with:
+- Label "Akshay Kumar" at position (25%, 45%), color orange (#FF6600)
+- Label "Narendra Modi" at position (75%, 45%), color saffron (#FF9933)
+- Bottom caption: "When Congress says no income tax"
+- Format: portrait (Instagram)
+The editor will ONLY do exactly what you specify - no adding extra labels or changing text.

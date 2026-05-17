@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Editor</title>
+    <link rel="stylesheet" href="/static/css/editor.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Meme Editor</h1>
+            <p>Add labels to images and videos</p>
+        </header>
+
+        <div class="editor-layout">
+            <div class="upload-section">
+                <div class="upload-area" id="dropZone">
+                    <div class="upload-icon">📁</div>
+                    <h3>Drop your image/video here or click to upload</h3>
+                    <p>Supports: PNG, JPG, JPEG, GIF, BMP, WEBP, MP4, AVI, MOV, MKV, WEBM</p>
+                    <input type="file" id="fileInput" accept="image/*,video/*" hidden>
+                    <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">
+                        Choose File
+                    </button>
+                </div>
+
+                <div class="ai-section">
+                    <h3>Image Settings</h3>
+                    <div class="form-group">
+                        <label>Format</label>
+                        <select id="formatSelect" class="format-select">
+                            <option value="original">Original</option>
+                            <option value="square">Instagram Square (1080x1080)</option>
+                            <option value="portrait" selected>Instagram Portrait (1080x1350)</option>
+                            <option value="landscape">Instagram Landscape (1080x566)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="video-controls" id="videoControls" style="display: none;">
+                    <h3>Video Timeline</h3>
+                    <div class="video-player-wrapper">
+                        <video id="videoPlayer" controls></video>
+                    </div>
+                    <div class="timeline">
+                        <input type="range" id="videoTimeline" min="0" max="100" value="0">
+                        <span id="videoTime">0:00 / 0:00</span>
+                    </div>
+                    <div class="frame-controls">
+                        <button class="btn btn-secondary btn-sm" id="prevFrameBtn">◀ Prev</button>
+                        <button class="btn btn-secondary btn-sm" id="playPauseBtn">▶ Play</button>
+                        <button class="btn btn-secondary btn-sm" id="nextFrameBtn">Next ▶</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Jump to second:</label>
+                        <input type="number" id="jumpToSecond" min="0" step="0.1" value="0">
+                        <button class="btn btn-secondary btn-sm" id="jumpBtn">Jump</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-container" id="previewContainer">
+                    <div id="mediaPreview">
+                        <div class="placeholder-preview">
+                            <span>Your media will appear here</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <div class="control-panel">
+                    <h3>Labels</h3>
+                    
+                    <div id="labelsList" class="labels-list"></div>
+                    
+                    <div class="add-label-section">
+                        <button class="btn btn-secondary btn-sm" id="addLabelBtn">+ Add Label</button>
+                    </div>
+                    
+                    <div class="selected-label-panel" id="selectedLabelPanel" style="display: none;">
+                        <h4>Edit Label</h4>
+                        
+                        <div class="form-group">
+                            <label>Text</label>
+                            <input type="text" id="labelName" placeholder="Enter label text">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Font Size: <span id="labelFontSizeValue">28</span>px</label>
+                                <input type="range" id="labelFontSize" min="12" max="120" value="28">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>X: <span id="labelPosXValue">50</span>%</label>
+                                <input type="range" id="labelPosX" min="0" max="100" value="50">
+                            </div>
+                            <div class="form-group">
+                                <label>Y: <span id="labelPosYValue">40</span>%</label>
+                                <input type="range" id="labelPosY" min="0" max="100" value="40">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Text Color</label>
+                                <div class="color-picker-wrapper">
+                                    <input type="color" id="labelColor" value="#FFFFFF">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Background</label>
+                                <input type="checkbox" id="labelBgEnabled" class="checkbox" checked>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group" id="videoLabelSection" style="display: none;">
+                            <label>Keyframes</label>
+                            <p class="help-text">Add keyframes to track this label as the person moves</p>
+                            <button class="btn btn-secondary btn-sm" id="addKeyframeBtn">+ Add Keyframe at Current Time</button>
+                            <div id="keyframesList" class="keyframes-list"></div>
+                        </div>
+
+                        <button class="btn btn-danger btn-sm" id="deleteLabelBtn">Delete Label</button>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <h3>Bottom Caption</h3>
+                    <div class="form-group">
+                        <textarea id="bottomText" placeholder="Enter caption for bottom..." rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="processBtn" disabled>
+                        <span class="btn-text">Generate Meme</span>
+                        <span class="btn-loading" style="display: none;">Processing...</span>
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loadingOverlay" class="loading-overlay">
+            <div class="spinner"></div>
+            <p id="loadingText">Processing your media...</p>
+        </div>
+    </div>
+
+    <script src="/static/js/editor.js"></script>
+</body>
+</html>
